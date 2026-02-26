@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦉 Who Dat - IP Geolocation Resolver</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ======================================= */
+        /*  ROOT THEME VARIABLES — MATRIX OWL THEME */
+        /* ======================================= */
+        :root {
+            --bg-primary: #0d0f14;
+            --bg-secondary: #13161d;
+            --bg-tertiary: #1a1f29;
+
+            --accent-owl-green: #00ff7b;
+            --accent-owl-green-soft: #72ffb8;
+
+            --accent-purple: #6366f1;
+            --accent-violet: #8b5cf6;
+
+            --text-primary: #eaf2ef;
+            --text-secondary: #96a0ad;
+
+            --error: #ef4444;
+            --success: #10b981;
+            --border: #2a3140;
+
+            --shadow-owl: rgba(0, 255, 130, 0.35);
+        }
+
+        /* ============================= */
+        /*      GLOBAL RESETS & BODY     */
+        /* ============================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ===================================== */
+        /*   A — BACKGROUND OWL WATERMARK LAYER   */
+        /* ===================================== */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("/static/who-dat.png");
+            background-repeat: no-repeat;
+            background-size: 520px;
+            background-position: center 180px;
+            opacity: 0.05;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Light matrix glow grid overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: repeating-linear-gradient(
+                45deg,
+                rgba(0, 255, 120, 0.015) 0,
+                rgba(0, 255, 120, 0.015) 25px,
+                transparent 25px,
+                transparent 50px
+            );
+            opacity: 0.7;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ============================= */
+        /*            CONTAINER          */
+        /* ============================= */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ===================================== */
+        /*           C — OWL LOGO HEADER         */
+        /* ===================================== */
+        .owl-logo {
+            width: 160px;
+            display: block;
+            margin: 0 auto 1.4rem auto;
+            filter: drop-shadow(0 0 20px var(--shadow-owl));
+            animation: owl-float 5s ease-in-out infinite;
+        }
+
+        @keyframes owl-float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-7px); }
+            100% { transform: translateY(0); }
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+            color: var(--accent-owl-green-soft);
+            text-shadow: 0 0 15px rgba(0,255,120,0.4);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            font-size: 1.15rem;
+        }
+
+        /* ===================================== */
+        /*          SECTION CARD STYLING         */
+        /* ===================================== */
+        .section {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: 16px;
+            backdrop-filter: blur(6px);
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 30px rgba(0,255,120,0.06);
+            position: relative;
+        }
+
+        /* C — Section divider owl watermark */
+        .section::before {
+            content: '';
+            background-image: url("/static/who-dat.png");
+            background-size: 48px;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.14;
+            display: block;
+            height: 50px;
+            margin-bottom: 1rem;
+        }
+
+        .section h2 {
+            font-size: 1.45rem;
+            margin-bottom: 1rem;
+            color: var(--accent-owl-green-soft);
+        }
+
+        .section p {
+            color: var(--text-secondary);
+            margin-bottom: 1.2rem;
+        }
+
+        /* ============================= */
+        /*           FILE UPLOAD         */
+        /* ============================= */
+        .file-upload {
+            border: 2px dashed var(--border);
+            padding: 2rem;
+            border-radius: 12px;
+            background: rgba(0,255,130,0.05);
+            text-align: center;
+            transition: 0.3s ease;
+        }
+
+        .file-upload:hover {
+            border-color: var(--accent-owl-green);
+            background: rgba(0,255,130,0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--accent-owl-green), var(--accent-owl-green-soft));
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #000;
+            margin: 0.5rem;
+            font-weight: 600;
+            box-shadow: 0 0 15px rgba(0,255,130,0.3);
+            transition: 0.25s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(0,255,130,0.5);
+        }
+
+        .btn-secondary {
+            background: #262c36;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: #2f3540;
+        }
+
+        /* ============================= */
+        /*        FLASH MESSAGES         */
+        /* ============================= */
+        .flash-messages {
+            margin-bottom: 2rem;
+        }
+
+        .flash-message {
+            background: linear-gradient(135deg, var(--success), #0fbe72);
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            color: white;
+            font-weight: 600;
+        }
+
+        .flash-message.error {
+            background: linear-gradient(135deg, var(--error), #c53030);
+        }
+
+        /* ============================= */
+        /*            PREVIEW TABLE      */
+        /* ============================= */
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .preview-table th,
+        .preview-table td {
+            border: 1px solid var(--border);
+            padding: 0.6rem;
+            color: var(--text-primary);
+        }
+
+        .preview-table th {
+            background: #1e2530;
+        }
+
+        .ip-column {
+            background: rgba(0,255,130,0.15);
+            font-weight: 600;
+        }
+
+        /* ==================================== */
+        /*   E — PROGRESS SECTION & OWL ANIM    */
+        /* ==================================== */
+        .progress-container {
+            display: none;
+            background: var(--bg-tertiary);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .owl-progress {
+            width: 120px;
+            display: block;
+            margin: 0 auto 1.5rem auto;
+            opacity: 0;
+            transition: 0.4s ease;
+        }
+
+        @keyframes owl-pulse {
+            0% { filter: drop-shadow(0 0 6px rgba(0,255,120,0.15)); }
+            50% { filter: drop-shadow(0 0 18px rgba(0,255,120,0.6)); }
+            100% { filter: drop-shadow(0 0 6px rgba(0,255,120,0.15)); }
+        }
+
+        .owl-progress.active {
+            opacity: 1;
+            animation: owl-pulse 1.8s infinite ease-in-out;
+        }
+
+        .owl-progress.success {
+            opacity: 1;
+            filter: drop-shadow(0 0 25px rgba(0,255,0,0.9));
+        }
+
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+
+        .owl-progress.error {
+            opacity: 1;
+            animation: shake 0.5s ease-in-out infinite;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #0f141a;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00ff7b, #72ffb8, #c2ffe7);
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            margin-top: 1rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        /* ============================= */
+        /*          RESPONSIVE           */
+        /* ============================= */
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            h1 { font-size: 2.3rem; }
+            .owl-logo { width: 130px; }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- C — Owl Logo -->
+    <img src="{{ url_for('static', filename='who-dat.png') }}" class="owl-logo">
+
+    <div class="container">
+
+        <h1>Who Dat</h1>
+        <p class="subtitle">IP Geolocation Resolver — Find Out Who That IP Belongs To</p>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                <div class="flash-message">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- UPLOAD SECTION -->
+        <div class="section">
+            <h2>📁 Upload IP File</h2>
+            <p>Upload a file containing IP addresses. Supported formats: TXT, CSV, TSV, XLS, XLSX.</p>
+
+            <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+                <div class="file-upload">
+                    <input type="file" id="fileInput" name="file" accept=".txt,.csv,.tsv,.xlsx,.xls" required>
+                    <br>
+                    <button type="button" id="previewBtn" class="btn-secondary btn">Preview File</button>
+                    <button type="submit" class="btn">Upload and Process</button>
+                </div>
+            </form>
+
+            <div id="filePreview" style="display:none;">
+                <h3>File Preview</h3>
+                <div id="previewContent"></div>
+            </div>
+        </div>
+
+        <!-- DATABASE UPDATE SECTION -->
+        <div class="section">
+            <h2>🔄 Update Databases</h2>
+            <p>Update the MaxMind GeoLite2 databases. Requires a license key in config.py.</p>
+            <form action="/update_databases" method="post">
+                <button type="submit" class="btn-secondary btn">Update Databases</button>
+            </form>
+        </div>
+
+        <!-- E — PROCESSING SECTION -->
+        <div class="progress-container" id="progressContainer">
+            <img src="{{ url_for('static', filename='who-dat.png') }}" class="owl-progress" id="owlProgress">
+
+            <h3 style="text-align:center; margin-bottom:1rem;">Processing Progress</h3>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Starting...</div>
+        </div>
+
+        <!-- RESULTS SECTION -->
+        <div class="section">
+            <h2>📊 View Results</h2>
+            <p>After processing, view or download your geolocation results.</p>
+            <a href="/results" class="btn">View Results</a>
+            <a href="/download" class="btn-secondary btn">Download Database</a>
+        </div>
+
+    </div>
+
+    <!-- ============================ -->
+    <!--        MAIN JAVASCRIPT       -->
+    <!-- ============================ -->
+    <script>
+        function checkProgress() {
+            fetch('/progress')
+                .then(r => r.json())
+                .then(data => {
+                    const container = document.getElementById('progressContainer');
+                    const fill = document.getElementById('progressFill');
+                    const text = document.getElementById('progressText');
+                    const owl = document.getElementById('owlProgress');
+
+                    if (data.status !== 'idle') {
+                        container.style.display = 'block';
+                        
+                        // Owl animation state:
+                        owl.classList.add('active');
+                        owl.classList.remove('success', 'error');
+
+                        if (data.status === 'completed') {
+                            owl.classList.remove('active');
+                            owl.classList.add('success');
+                        }
+
+                        if (data.status === 'error') {
+                            owl.classList.remove('active');
+                            owl.classList.add('error');
+                        }
+
+                        if (data.total > 0) {
+                            fill.style.width = ((data.current / data.total) * 100) + '%';
+                        }
+
+                        text.textContent = data.message;
+
+                    } else {
+                        container.style.display = 'none';
+                        owl.classList.remove('active', 'success', 'error');
+                    }
+                })
+                .catch(err => console.error('Progress error:', err));
+        }
+
+        // PREVIEW HANDLER
+        document.getElementById('previewBtn').addEventListener('click', () => {
+            const fileInput = document.getElementById('fileInput');
+            const filePreview = document.getElementById('filePreview');
+            const previewContent = document.getElementById('previewContent');
+
+            if (!fileInput.files[0]) {
+                alert("Please select a file.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            fetch('/preview', { method: 'POST', body: formData })
+            .then(r => r.json())
+            .then(data => {
+                filePreview.style.display = 'block';
+
+                if (data.error) {
+                    previewContent.innerHTML = `<div class="flash-message error">${data.error}</div>`;
+                    return;
+                }
+
+                let html = `<div class="file-info">`;
+                html += `<strong>File Type:</strong> ${data.type}<br>`;
+
+                if (data.total_rows) html += `<strong>Total Rows:</strong> ${data.total_rows}<br>`;
+                if (data.ip_column) {
+                    html += `<strong>Detected IP Column:</strong> ${data.ip_column}<br>`;
+                    html += `<strong>Confidence:</strong> ${data.confidence.toFixed(1)}%`;
+                }
+
+                html += `</div>`;
+
+                if (data.preview) {
+                    if (data.type === 'text') {
+                        html += `<pre>${data.preview.join('')}</pre>`;
+                    } else if (data.columns) {
+                        html += `<h4>Columns:</h4><p>${data.columns.join(', ')}</p>`;
+                        html += `<h4>Preview (first 10 rows):</h4>`;
+                        html += `<table class="preview-table"><tr>`;
+
+                        data.columns.forEach(col => {
+                            const cls = col === data.ip_column ? "ip-column" : "";
+                            html += `<th class="${cls}">${col}</th>`;
+                        });
+                        html += `</tr>`;
+
+                        data.preview.forEach(row => {
+                            html += `<tr>`;
+                            data.columns.forEach(col => {
+                                const cls = col === data.ip_column ? "ip-column" : "";
+                                html += `<td class="${cls}">${row[col] || ''}</td>`;
+                            });
+                            html += `</tr>`;
+                        });
+
+                        html += `</table>`;
+                    }
+                }
+
+                previewContent.innerHTML = html;
+            })
+            .catch(err => {
+                console.error('Preview error:', err);
+                previewContent.innerHTML = `<div class="flash-message error">Error previewing file</div>`;
+            });
+        });
+
+        // Progress Polling
+        setInterval(checkProgress, 2000);
+        checkProgress();
+    </script>
+
+</body>
+</html>
