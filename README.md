@@ -12,7 +12,7 @@
 
 - 📁 **Smart File Upload** - Supports TXT, CSV, Excel, TSV files with automatic IP column detection
 - 🔄 **One-Click Database Updates** - Built-in MaxMind database management
-- 📊 **Real-time Progress Tracking** - Live progress bars with animated owl states
+- 📊 **Real-time Progress Tracking** - Live progress bars
 - 🔍 **Searchable Results** - Interactive table with filtering and search capabilities
 - 💾 **Export Options** - Download results as SQLite database
 - ⚡ **Batch Processing** - Efficient handling of large IP lists
