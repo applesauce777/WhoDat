@@ -38,7 +38,8 @@ def main():
         print(f"Error: No valid IP addresses found in {file_type} file")
         sys.exit(1)
     
-    print(f"Found {len(ips)} IPs in {file_type} (confidence: {confidence:.1f}%)")
+    conf_str = f'{confidence:.1f}%' if confidence is not None else 'N/A'
+    print(f"Found {len(ips)} IPs in {file_type} (confidence: {conf_str})")
 
     # Open MaxMind databases
     geoip_asn = geoip2.database.Reader("GeoLite2-ASN.mmdb")
@@ -74,15 +75,12 @@ def main():
 
     # Process IPs in batches
     batch = []
-    skipped = open("skipped_ips.txt", "w")
 
     if not os.path.exists(IP_FILE):
         print(f"Error: File {IP_FILE} not found.")
         sys.exit(1)
 
-    # Count total IPs for progress bar
-    total_ips = count_lines(IP_FILE)
-    print(f"Processing {total_ips} IP addresses...")
+    print(f"Processing {len(ips)} IP addresses...")
 
     # Process IPs from extracted list
     for ip in tqdm(ips, desc="Resolving IPs", unit="ip"):
@@ -120,7 +118,6 @@ def main():
     geoip_asn.close()
     geoip_city.close()
     conn.close()
-    skipped.close()
 
     print(f"\nFinished processing {len(ips)} IP addresses from {file_type}.")
     print(f"Results saved to {DB_FILE}")

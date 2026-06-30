@@ -485,7 +485,9 @@
                 if (data.total_rows) html += `<strong>Total Rows:</strong> ${data.total_rows}<br>`;
                 if (data.ip_column) {
                     html += `<strong>Detected IP Column:</strong> ${data.ip_column}<br>`;
-                    html += `<strong>Confidence:</strong> ${data.confidence.toFixed(1)}%`;
+                    if (data.confidence !== null && data.confidence !== undefined) {
+                        html += `<strong>Confidence:</strong> ${data.confidence.toFixed(1)}%`;
+                    }
                 }
 
                 html += `</div>`;

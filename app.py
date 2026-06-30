@@ -52,7 +52,8 @@ def process_ips_async(ip_file, db_file, batch_size=1000):
             return
             
         total_ips = len(ips)
-        update_progress(0, total_ips, 'loading', f'Found {total_ips} IPs in {file_type} (confidence: {confidence:.1f}%)')
+        conf_str = f'{confidence:.1f}%' if confidence is not None else 'N/A'
+        update_progress(0, total_ips, 'loading', f'Found {total_ips} IPs in {file_type} (confidence: {conf_str})')
         
         # Open MaxMind databases
         geoip_asn = geoip2.database.Reader("GeoLite2-ASN.mmdb")

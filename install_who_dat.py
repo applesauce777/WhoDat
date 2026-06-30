@@ -218,9 +218,45 @@ osascript -e 'tell app "Terminal" to do script "cd {install_dir} && echo Who Dat
     print_success(f"Created {app_dir}")
 
 
+def get_terminal_command():
+    """Detect available terminal emulator."""
+    terminals = ['gnome-terminal', 'konsole', 'xfce4-terminal', 'mate-terminal', 'lxterminal', 'xterm']
+    for term in terminals:
+        if shutil.which(term):
+            return term
+    return 'x-terminal-emulator'  # Fallback to Debian/Ubuntu symlink
+
+def get_python_command():
+    """Detect python command, preferring venv if active."""
+    # Check if VIRTUAL_ENV is set
+    venv_path = os.environ.get('VIRTUAL_ENV')
+    if venv_path:
+        venv_python = Path(venv_path) / 'bin' / 'python'
+        if venv_python.exists():
+            return str(venv_python)
+    
+    # Check for common venv locations
+    home = Path.home()
+    venv_locations = [
+        home / 'venvs' / 'myenv' / 'bin' / 'python',
+        home / '.venv' / 'bin' / 'python',
+        home / 'venv' / 'bin' / 'python',
+    ]
+    
+    for venv_python in venv_locations:
+        if venv_python.exists():
+            return str(venv_python)
+    
+    # Fallback to system python
+    return sys.executable
+
 def create_linux_desktop(install_dir):
     """Create Linux .desktop file and CLI wrapper."""
     home = Path.home()
+    
+    # Detect available terminal and python
+    terminal = get_terminal_command()
+    python_cmd = get_python_command()
     
     # Web app .desktop file
     desktop_dir = home / '.local' / 'share' / 'applications'
@@ -231,7 +267,7 @@ Version=1.0
 Type=Application
 Name=Who Dat Web
 Comment=IP geolocation web interface - Who dat IP?
-Exec=gnome-terminal -- bash -c "cd {install_dir} && python3 launcher.py"
+Exec={terminal} --hold -e bash -c "cd {install_dir} && {python_cmd} launcher.py"
 Icon={install_dir}/icons/who-dat.png
 Terminal=false
 Categories=Network;Science;

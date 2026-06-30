@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦉 Who Dat - Results</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-primary: #0d0f14;
+            --bg-secondary: #13161d;
+            --bg-tertiary: #1a1f29;
+            --accent-owl-green: #00ff7b;
+            --accent-owl-green-soft: #72ffb8;
+            --text-primary: #eaf2ef;
+            --text-secondary: #96a0ad;
+            --border: #2a3140;
+            --shadow-owl: rgba(0, 255, 130, 0.35);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent-owl-green-soft);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .section {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+        }
+
+        .stats {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-box {
+            background: rgba(0, 255, 120, 0.1);
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            border: 1px solid var(--accent-owl-green);
+        }
+
+        .stat-box strong {
+            display: block;
+            font-size: 1.5rem;
+            color: var(--accent-owl-green);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            border: 1px solid var(--border);
+            padding: 0.8rem;
+            text-align: left;
+        }
+
+        th {
+            background: #1e2530;
+            color: var(--accent-owl-green-soft);
+        }
+
+        tr:hover {
+            background: rgba(0, 255, 120, 0.05);
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-owl-green), var(--accent-owl-green-soft));
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #000;
+            margin: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 0 15px rgba(0,255,130,0.3);
+            transition: 0.25s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(0,255,130,0.5);
+        }
+
+        .btn-secondary {
+            background: #262c36;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: #2f3540;
+        }
+
+        .actions {
+            text-align: center;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🦉 Who Dat Results</h1>
+        <p class="subtitle">IP Geolocation Data</p>
+
+        <div class="section">
+            <div class="stats">
+                <div class="stat-box">
+                    <strong>{{ total_count }}</strong>
+                    Total IPs Processed
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>IP Address</th>
+                        <th>ISP</th>
+                        <th>City</th>
+                        <th>Region</th>
+                        <th>Country</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in results %}
+                    <tr>
+                        <td>{{ row[0] }}</td>
+                        <td>{{ row[1] }}</td>
+                        <td>{{ row[2] }}</td>
+                        <td>{{ row[3] }}</td>
+                        <td>{{ row[4] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {% if total_count > 100 %}
+            <p style="margin-top: 1rem; color: var(--text-secondary);">
+                Showing first 100 results. Download the database for full results.
+            </p>
+            {% endif %}
+
+            <div class="actions">
+                <a href="/download" class="btn">Download Database</a>
+                <a href="/" class="btn-secondary btn">Back to Upload</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
